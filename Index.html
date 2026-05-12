@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sumit Rathor | Java Developer & CS Student</title>
+<meta name="description" content="Sumit Rathor — 3rd Year CS Student at ITM Gwalior. Java developer, ML enthusiast, open to internships."/>
+<meta name="author" content="Sumit Rathor"/>
+
+<!-- Custom SVG Favicon: SR initials in cyberpunk style -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%23030508'/%3E%3Crect x='2' y='2' width='60' height='60' rx='7' fill='none' stroke='%2300ff88' stroke-width='2'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='26' font-weight='900' fill='%2300ff88' text-anchor='middle'%3ESR%3C/text%3E%3Cline x1='8' y1='52' x2='56' y2='52' stroke='%2300cfff' stroke-width='1.5'/%3E%3C/svg%3E"/>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ── THEME VARIABLES ── */
+:root{
+  --bg:#030508;--surface:#080d12;--surface2:#0d1520;
+  --accent:#00ff88;--accent2:#00cfff;
+  --text:#d0ffe8;--muted:#4a7a60;
+  --border:rgba(0,255,136,0.15);--glow:rgba(0,255,136,0.2);
+  --nav-bg:rgba(3,5,8,0.92);
+  --modal-bg:rgba(3,5,8,0.97);
+  --scanline:rgba(0,0,0,0.025);
+  --transition:0.35s cubic-bezier(.4,0,.2,1);
+}
+body.day{
+  --bg:#f0f4f0;--surface:#e0ede6;--surface2:#d4e8da;
+  --accent:#007744;--accent2:#0066aa;
+  --text:#0d2a1a;--muted:#557766;
+  --border:rgba(0,119,68,0.2);--glow:rgba(0,119,68,0.15);
+  --nav-bg:rgba(240,244,240,0.95);
+  --modal-bg:rgba(240,244,240,0.98);
+  --scanline:rgba(0,0,0,0.01);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;scroll-padding-top:20px;}
+body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;overflow-x:hidden;cursor:none;transition:background var(--transition),color var(--transition);}
+
+/* ── CURSOR ── */
+#cur{position:fixed;width:10px;height:10px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:multiply;transition:background .2s;}
+#cur-ring{position:fixed;width:32px;height:32px;border:1.5px solid var(--accent);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);opacity:0.5;transition:width .18s,height .18s,opacity .18s,border-color .2s;}
+@media(hover:none){#cur,#cur-ring{display:none;}body{cursor:auto;}}
+
+/* ── CANVAS ── */
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;transition:opacity .4s;}
+body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,var(--scanline) 2px,var(--scanline) 4px);}
+
+/* ── TOP NAV — pill shaped, centered, like reference image ── */
+nav{
+  position:fixed;top:20px;left:50%;transform:translateX(-50%);
+  z-index:300;
+  display:flex;align-items:center;gap:4px;
+  background:#030508;
+  backdrop-filter:blur(24px);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:999px;
+  padding:10px 18px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);
+  transition:background var(--transition);
+  width:auto;white-space:nowrap;
+}
+body.day nav{background:rgba(230,240,234,0.88);border-color:rgba(0,119,68,0.2);}
+.nav-pill-link{
+  font-family:'Share Tech Mono',monospace;font-size:0.68rem;
+  color:rgba(255,255,255,0.5);text-decoration:none;
+  letter-spacing:1px;padding:7px 13px;border-radius:999px;
+  transition:all .22s;white-space:nowrap;
+}
+body.day .nav-pill-link{color:var(--muted);}
+.nav-pill-link:hover{color:#fff;background:rgba(255,255,255,0.08);}
+body.day .nav-pill-link:hover{color:var(--accent);background:rgba(0,119,68,0.08);}
+.nav-pill-link.active{color:#fff;background:rgba(255,255,255,0.1);}
+body.day .nav-pill-link.active{color:var(--accent);}
+.nav-divider{width:1px;height:18px;background:rgba(255,255,255,0.1);margin:0 4px;}
+body.day .nav-divider{background:rgba(0,119,68,0.15);}
+/* theme icon in nav */
+.nav-theme-btn{
+  display:flex;align-items:center;justify-content:center;
+  width:34px;height:34px;border-radius:50%;
+  border:1px solid rgba(255,255,255,0.12);
+  background:rgba(255,255,255,0.04);
+  color:rgba(255,255,255,0.6);cursor:pointer;
+  transition:all .22s;margin-left:4px;
+}
+body.day .nav-theme-btn{border-color:rgba(0,119,68,0.2);background:rgba(0,119,68,0.05);color:var(--muted);}
+.nav-theme-btn:hover{background:rgba(255,255,255,0.12);color:#fff;border-color:rgba(255,255,255,0.25);}
+body.day .nav-theme-btn:hover{background:rgba(0,119,68,0.1);color:var(--accent);}
+.nav-theme-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;}
+/* hamburger for mobile */
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none;z-index:400;}
+.hamburger span{display:block;width:22px;height:2px;background:rgba(255,255,255,0.7);transition:all .3s;border-radius:2px;}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.mobile-menu{position:fixed;inset:0;background:rgba(3,5,8,0.97);backdrop-filter:blur(24px);z-index:350;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;transform:translateY(-100%);transition:transform .4s cubic-bezier(.4,0,.2,1);}
+body.day .mobile-menu{background:rgba(240,244,240,0.98);}
+.mobile-menu.open{transform:translateY(0);}
+.mobile-menu a{font-family:'Share Tech Mono',monospace;font-size:1.3rem;color:var(--muted);text-decoration:none;letter-spacing:4px;text-transform:uppercase;transition:color .2s;}
+.mobile-menu a:hover{color:var(--accent);}
+
+/* ── FLOATING DOCK NAV ── */
+.dock{
+  position:fixed;
+  top:20px;left:50%;transform:translateX(-50%);
+  z-index:300;
+  display:flex;align-items:center;gap:6px;
+  background:var(--nav-bg);
+  border:1px solid var(--border);
+  border-radius:999px;
+  padding:10px 16px;
+  backdrop-filter:blur(24px);
+  box-shadow:0 8px 40px rgba(0,0,0,0.4),0 0 0 1px rgba(0,255,136,0.08),inset 0 1px 0 rgba(0,255,136,0.06);
+  transition:background var(--transition),border-color var(--transition);
+}
+.dock-item{
+  position:relative;
+  display:flex;flex-direction:column;align-items:center;
+  text-decoration:none;
+  padding:8px 14px;
+  border-radius:999px;
+  transition:all .25s;
+  cursor:pointer;border:none;background:transparent;
+  color:var(--muted);
+  font-family:'Share Tech Mono',monospace;font-size:0.58rem;letter-spacing:1px;
+}
+.dock-item:hover,.dock-item.active{color:var(--accent);background:rgba(0,255,136,0.08);}
+.dock-item svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;margin-bottom:3px;}
+.dock-label{font-size:0.5rem;letter-spacing:1.5px;text-transform:uppercase;}
+.dock-tip{
+  position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--text);font-family:'Share Tech Mono',monospace;font-size:0.58rem;
+  padding:4px 10px;white-space:nowrap;border-radius:4px;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.dock-item:hover .dock-tip{opacity:1;}
+.dock-divider{width:1px;height:32px;background:var(--border);margin:0 4px;}
+/* theme toggle btn in dock */
+.theme-toggle{
+  display:flex;align-items:center;gap:6px;
+  padding:8px 14px;border-radius:999px;
+  border:1px solid var(--border);
+  background:rgba(0,255,136,0.05);
+  color:var(--accent);
+  font-family:'Share Tech Mono',monospace;font-size:0.58rem;
+  letter-spacing:1px;cursor:pointer;
+  transition:all .25s;
+}
+.theme-toggle:hover{background:rgba(0,255,136,0.12);box-shadow:0 0 14px var(--glow);}
+.theme-toggle svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;}
+
+/* ── HERO ── */
+#hero{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:120px 60px 100px;}
+.bg-icons{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.bicon{position:absolute;font-size:2rem;opacity:0;animation:biconAnim linear infinite;}
+@keyframes biconAnim{0%{opacity:0;transform:translateY(20px) scale(0.8);}15%{opacity:0.14;}85%{opacity:0.14;}100%{opacity:0;transform:translateY(-40px) scale(1.1);}}
+.hero-content{position:relative;z-index:1;max-width:780px;}
+.terminal-tag{font-family:'Share Tech Mono',monospace;font-size:0.72rem;color:var(--accent);letter-spacing:2px;margin-bottom:24px;opacity:0;animation:fadeUp .6s .1s forwards;}
+.terminal-tag::before{content:'> ';}
+.ti-svg{width:22px;height:22px;display:inline-block;vertical-align:middle;flex-shrink:0;}
+h1.hero-name{font-family:'Orbitron',monospace;font-weight:900;font-size:clamp(2.6rem,7vw,6rem);line-height:1.1;letter-spacing:2px;opacity:0;animation:fadeUp .8s .25s forwards;}
+.hero-name .line1{color:var(--text);font-size:clamp(1.2rem,3vw,2.2rem);font-weight:400;letter-spacing:5px;display:block;margin-bottom:8px;font-family:'Share Tech Mono',monospace;opacity:0.85;}
+.hero-name .line2{display:block;color:transparent;-webkit-text-stroke:2px var(--accent);text-shadow:0 0 50px var(--glow);}
+.typing-wrapper{margin-top:20px;height:32px;display:flex;justify-content:center;align-items:center;gap:8px;opacity:0;animation:fadeUp .8s .4s forwards;}
+.typing-prefix{font-family:'Share Tech Mono',monospace;font-size:0.85rem;color:var(--muted);letter-spacing:1px;}
+.typing-text{font-family:'Share Tech Mono',monospace;font-size:0.95rem;color:var(--accent2);letter-spacing:2px;min-width:260px;text-align:left;}
+.typing-cursor{display:inline-block;width:9px;height:16px;background:var(--accent2);animation:blink .8s infinite;vertical-align:middle;margin-left:2px;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+.hero-desc{font-size:1rem;color:var(--muted);line-height:1.9;margin-top:24px;max-width:560px;margin-left:auto;margin-right:auto;opacity:0;animation:fadeUp .8s .55s forwards;}
+.hero-desc b{color:var(--accent2);}
+/* Ticker */
+.skills-ticker-wrap{width:100%;overflow:hidden;margin-top:36px;padding:12px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);position:relative;opacity:0;animation:fadeUp .8s .65s forwards;}
+.skills-ticker-wrap::before,.skills-ticker-wrap::after{content:'';position:absolute;top:0;width:80px;height:100%;z-index:2;}
+.skills-ticker-wrap::before{left:0;background:linear-gradient(90deg,var(--bg),transparent);}
+.skills-ticker-wrap::after{right:0;background:linear-gradient(270deg,var(--bg),transparent);}
+.skills-ticker{display:flex;animation:tickerScroll 22s linear infinite;width:max-content;}
+.skills-ticker:hover{animation-play-state:paused;}
+.ticker-item{display:flex;align-items:center;gap:10px;padding:0 28px;font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--muted);letter-spacing:2px;white-space:nowrap;}
+.ticker-item .ti-icon{font-size:1.1rem;}
+.ticker-item .ti-dot{width:4px;height:4px;border-radius:50%;background:var(--accent);opacity:0.4;}
+@keyframes tickerScroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:36px;justify-content:center;opacity:0;animation:fadeUp .8s .8s forwards;}
+.btn-primary{font-family:'Share Tech Mono',monospace;font-size:0.72rem;letter-spacing:2px;padding:14px 30px;border:none;background:var(--accent);color:#000;cursor:pointer;text-decoration:none;display:inline-block;clip-path:polygon(10px 0%,100% 0%,100% calc(100% - 10px),calc(100% - 10px) 100%,0% 100%,0% 10px);transition:all .2s;font-weight:600;}
+.btn-primary:hover{background:#fff;box-shadow:0 0 40px var(--glow);}
+.btn-outline{font-family:'Share Tech Mono',monospace;font-size:0.72rem;letter-spacing:2px;padding:13px 30px;border:1px solid var(--accent2);background:transparent;color:var(--accent2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s;clip-path:polygon(10px 0%,100% 0%,100% calc(100% - 10px),calc(100% - 10px) 100%,0% 100%,0% 10px);}
+.btn-outline:hover{background:rgba(0,207,255,0.1);}
+.btn-resume{font-family:'Share Tech Mono',monospace;font-size:0.72rem;letter-spacing:2px;padding:13px 30px;border:1px solid var(--muted);background:transparent;color:var(--muted);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s;clip-path:polygon(10px 0%,100% 0%,100% calc(100% - 10px),calc(100% - 10px) 100%,0% 100%,0% 10px);}
+.btn-resume:hover{border-color:var(--accent);color:var(--accent);}
+.scroll-hint{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0.35;animation:fadeUp 1s 1.5s forwards;}
+.scroll-hint span{font-family:'Share Tech Mono',monospace;font-size:0.5rem;color:var(--muted);letter-spacing:3px;}
+.scroll-arrow{width:16px;height:16px;border-right:1px solid var(--accent);border-bottom:1px solid var(--accent);transform:rotate(45deg);animation:scrollBounce 1.5s infinite;}
+@keyframes scrollBounce{0%,100%{transform:rotate(45deg) translateY(0);}50%{transform:rotate(45deg) translateY(5px);}}
+
+/* ── SECTIONS ── */
+section{position:relative;z-index:2;padding:100px 60px;}
+.sec-label{font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--accent2);letter-spacing:4px;text-transform:uppercase;margin-bottom:10px;}
+.sec-label::before{content:'// ';}
+.sec-title{font-family:'Orbitron',monospace;font-weight:700;font-size:clamp(2rem,4.5vw,3.5rem);letter-spacing:2px;line-height:1.1;}
+.sec-title .hl{color:var(--accent);text-shadow:0 0 20px var(--glow);}
+
+/* ── ABOUT ── */
+#about{background:rgba(8,13,18,0.4);}
+body.day #about{background:rgba(224,237,230,0.5);}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;margin-top:50px;}
+.about-text p{color:var(--muted);line-height:1.9;font-size:0.95rem;margin-top:16px;}
+.about-text p b{color:var(--accent2);}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
+.stat-box{background:var(--surface);border:1px solid var(--border);padding:28px;transition:all .3s;clip-path:polygon(8px 0%,100% 0%,100% calc(100% - 8px),calc(100% - 8px) 100%,0% 100%,0% 8px);}
+.stat-box:hover{border-color:var(--accent);box-shadow:0 0 20px var(--glow);}
+.stat-num{font-family:'Orbitron',monospace;font-size:2.5rem;font-weight:900;color:var(--accent);text-shadow:0 0 20px var(--glow);line-height:1;}
+.stat-label{font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:2px;margin-top:6px;}
+
+/* ── SKILLS ── */
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:2px;margin-top:50px;}
+.skill-group{background:var(--surface);border:1px solid var(--border);padding:28px;transition:all .3s;border-top:2px solid var(--accent);}
+.skill-group:nth-child(2){border-top-color:var(--accent2);}
+.skill-group:nth-child(3){border-top-color:#88ff00;}
+.skill-group:nth-child(4){border-top-color:#00ffcc;}
+body.day .skill-group:nth-child(3){border-top-color:#449900;}
+.skill-group:hover{box-shadow:0 0 30px rgba(0,255,136,0.07);transform:translateY(-4px);}
+.sg-icon{font-size:1.6rem;margin-bottom:12px;}
+.sg-title{font-family:'Orbitron',monospace;font-size:0.78rem;font-weight:600;letter-spacing:2px;color:var(--accent);margin-bottom:16px;}
+.skill-bar-row{display:flex;flex-direction:column;gap:5px;margin-bottom:10px;}
+.skill-bar-top{display:flex;justify-content:space-between;font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:var(--muted);}
+.skill-bar-bg{height:4px;background:rgba(0,255,136,0.07);overflow:hidden;}
+.skill-bar-fill{height:100%;transform:scaleX(0);transform-origin:left;transition:transform 1.3s cubic-bezier(.4,0,.2,1);background:linear-gradient(90deg,var(--accent),var(--accent2));}
+.skill-bar-fill.animate{transform:scaleX(1);}
+.skill-bar-fill.b2{background:linear-gradient(90deg,var(--accent2),#88aaff);}
+.skill-bar-fill.b3{background:linear-gradient(90deg,#88ff00,var(--accent));}
+.skill-bar-fill.b4{background:linear-gradient(90deg,#00ffcc,var(--accent2));}
+
+/* ── PROJECTS ── */
+#projects{background:rgba(8,13,18,0.4);}
+body.day #projects{background:rgba(224,237,230,0.5);}
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:2px;margin-top:50px;}
+.project-card{
+  background:var(--surface);border:1px solid var(--border);
+  padding:36px;position:relative;overflow:hidden;
+  transition:all .35s;
+  clip-path:polygon(12px 0%,100% 0%,100% calc(100% - 12px),calc(100% - 12px) 100%,0% 100%,0% 12px);
+  cursor:pointer;
+}
+.project-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);transform:scaleX(0);transition:transform .35s;}
+.project-card:hover::before{transform:scaleX(1);}
+.project-card:hover{border-color:rgba(0,255,136,0.35);box-shadow:0 0 40px rgba(0,255,136,0.08),0 20px 60px rgba(0,0,0,0.4);transform:translateY(-6px);}
+.proj-num{font-family:'Orbitron',monospace;font-size:3.5rem;font-weight:900;color:rgba(0,255,136,0.05);position:absolute;top:16px;right:20px;line-height:1;}
+.proj-tag{font-family:'Share Tech Mono',monospace;font-size:0.58rem;color:var(--accent2);letter-spacing:3px;margin-bottom:14px;}
+.proj-title{font-family:'Orbitron',monospace;font-size:1rem;font-weight:700;letter-spacing:1px;margin-bottom:12px;}
+.proj-desc{font-size:0.88rem;color:var(--muted);line-height:1.8;margin-bottom:22px;}
+.proj-chips{display:flex;gap:6px;flex-wrap:wrap;}
+.pchip{font-family:'Share Tech Mono',monospace;font-size:0.55rem;padding:3px 10px;border:1px solid var(--border);color:var(--muted);letter-spacing:1px;}
+.proj-click-hint{font-family:'Share Tech Mono',monospace;font-size:0.55rem;color:var(--accent);letter-spacing:2px;margin-top:16px;opacity:0.6;}
+
+/* ── PROJECT MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,0.85);
+  backdrop-filter:blur(12px);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .35s ease;
+  padding:24px;
+}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-box{
+  background:var(--modal-bg);
+  border:1px solid var(--border);
+  max-width:700px;width:100%;
+  max-height:90vh;overflow-y:auto;
+  padding:48px;
+  position:relative;
+  transform:scale(0.88) translateY(30px);
+  transition:transform .4s cubic-bezier(.4,0,.2,1);
+  clip-path:polygon(20px 0%,100% 0%,100% calc(100% - 20px),calc(100% - 20px) 100%,0% 100%,0% 20px);
+  box-shadow:0 0 80px rgba(0,255,136,0.12),0 40px 100px rgba(0,0,0,0.6);
+}
+.modal-overlay.open .modal-box{transform:scale(1) translateY(0);}
+.modal-close{
+  position:absolute;top:18px;right:20px;
+  background:none;border:1px solid var(--border);
+  color:var(--muted);cursor:pointer;
+  font-family:'Share Tech Mono',monospace;font-size:0.7rem;
+  padding:6px 12px;letter-spacing:2px;
+  transition:all .2s;
+}
+.modal-close:hover{border-color:var(--accent);color:var(--accent);}
+.modal-num{font-family:'Orbitron',monospace;font-size:5rem;font-weight:900;color:rgba(0,255,136,0.05);line-height:1;margin-bottom:-10px;}
+.modal-tag{font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:var(--accent2);letter-spacing:3px;margin-bottom:14px;}
+.modal-title{font-family:'Orbitron',monospace;font-size:1.8rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;color:var(--text);}
+.modal-divider{height:1px;background:linear-gradient(90deg,var(--accent),transparent);margin-bottom:24px;}
+.modal-body{font-size:0.95rem;color:var(--muted);line-height:1.9;margin-bottom:24px;}
+.modal-section-title{font-family:'Share Tech Mono',monospace;font-size:0.62rem;color:var(--accent);letter-spacing:3px;margin-bottom:12px;margin-top:20px;}
+.modal-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.modal-chip{font-family:'Share Tech Mono',monospace;font-size:0.6rem;padding:5px 14px;border:1px solid var(--border);color:var(--muted);letter-spacing:1px;}
+.modal-links{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;}
+.modal-link{font-family:'Share Tech Mono',monospace;font-size:0.65rem;letter-spacing:2px;padding:10px 22px;border:1px solid var(--accent);color:var(--accent);text-decoration:none;transition:all .2s;clip-path:polygon(6px 0%,100% 0%,100% calc(100% - 6px),calc(100% - 6px) 100%,0% 100%,0% 6px);}
+.modal-link:hover{background:var(--accent);color:#000;}
+.modal-link.ghost{border-color:var(--muted);color:var(--muted);}
+.modal-link.ghost:hover{border-color:var(--accent2);color:var(--accent2);}
+
+/* ── EDUCATION ── */
+.edu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:2px;margin-top:50px;}
+.edu-card{background:var(--surface);border:1px solid var(--border);padding:32px;position:relative;overflow:hidden;transition:all .3s;clip-path:polygon(10px 0%,100% 0%,100% calc(100% - 10px),calc(100% - 10px) 100%,0% 100%,0% 10px);}
+.edu-card:hover{border-color:var(--accent);box-shadow:0 0 30px var(--glow);}
+.edu-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));}
+.edu-year{font-family:'Share Tech Mono',monospace;font-size:0.62rem;color:var(--accent);letter-spacing:2px;margin-bottom:12px;}
+.edu-degree{font-family:'Orbitron',monospace;font-size:1rem;font-weight:600;letter-spacing:1px;margin-bottom:8px;}
+.edu-school{font-size:0.88rem;color:var(--muted);line-height:1.6;}
+.edu-badge{display:inline-block;margin-top:16px;font-family:'Share Tech Mono',monospace;font-size:0.58rem;padding:4px 12px;border:1px solid rgba(0,255,136,0.3);color:var(--accent);letter-spacing:2px;background:rgba(0,255,136,0.05);}
+.edu-icon{position:absolute;bottom:18px;right:20px;font-size:2.5rem;opacity:0.05;}
+
+/* ── CONTACT ── */
+#contact{background:rgba(8,13,18,0.4);text-align:center;}
+body.day #contact{background:rgba(224,237,230,0.5);}
+.contact-inner{max-width:900px;margin:0 auto;}
+.contact-big{font-family:'Orbitron',monospace;font-weight:900;font-size:clamp(2.5rem,6vw,5rem);line-height:1;letter-spacing:2px;margin:20px 0;}
+.contact-big span{color:transparent;-webkit-text-stroke:1px var(--accent);text-shadow:0 0 30px var(--glow);}
+.contact-sub{color:var(--muted);font-size:0.95rem;line-height:1.8;margin-bottom:40px;}
+.contact-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:40px;}
+.social-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:2px;margin-top:20px;}
+.social-card{background:var(--surface);border:1px solid var(--border);padding:24px 18px;display:flex;flex-direction:column;align-items:center;gap:10px;text-decoration:none;transition:all .3s;clip-path:polygon(10px 0%,100% 0%,100% calc(100% - 10px),calc(100% - 10px) 100%,0% 100%,0% 10px);position:relative;overflow:hidden;}
+.social-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));transform:scaleX(0);transition:transform .3s;}
+.social-card:hover::before{transform:scaleX(1);}
+.social-card:hover{border-color:rgba(0,255,136,0.35);box-shadow:0 0 30px rgba(0,255,136,0.08);transform:translateY(-5px);}
+.sc-icon{font-size:1.8rem;}
+.sc-name{font-family:'Orbitron',monospace;font-size:0.7rem;font-weight:600;letter-spacing:2px;color:var(--text);}
+.sc-handle{font-family:'Share Tech Mono',monospace;font-size:0.56rem;color:var(--muted);letter-spacing:1px;word-break:break-all;text-align:center;}
+.sc-action{font-family:'Share Tech Mono',monospace;font-size:0.54rem;color:var(--accent);letter-spacing:2px;margin-top:2px;}
+
+/* ── FOOTER ── */
+footer{position:relative;z-index:2;padding:24px 60px 90px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+footer span{font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:2px;}
+.fa{color:var(--accent);}
+
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .8s ease,transform .8s ease;}
+.reveal.visible{opacity:1;transform:none;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:none;}}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--accent);border-radius:2px;}
+
+/* ── MOBILE ── */
+@media(max-width:768px){
+  nav{
+    top:12px;
+    padding:8px 12px;
+    gap:2px;
+    max-width:calc(100vw - 24px);
+    overflow-x:auto;
+  }
+  .nav-pill-link{font-size:0.6rem;padding:6px 10px;letter-spacing:0.5px;}
+  .nav-divider{display:none;}
+  #hero{padding:110px 24px 100px;}
+  section{padding:70px 24px 80px;}
+  .about-grid{grid-template-columns:1fr;gap:40px;}
+  footer{padding:20px 24px 90px;flex-direction:column;text-align:center;}
+  .contact-big{font-size:2.2rem;}
+  h1.hero-name{font-size:2.2rem;}
+  .hero-name .line1{font-size:1rem;}
+  .modal-box{padding:28px 20px;}
+  .modal-title{font-size:1.3rem;}
+  .dock{padding:8px 10px;gap:2px;top:12px;}
+  .dock-item{padding:6px 8px;}
+  .dock-label{display:none;}
+  .dock-divider{height:24px;}
+}
+</style>
+</head>
+<body>
+
+<div id="cur" aria-hidden="true"></div>
+<div id="cur-ring" aria-hidden="true"></div>
+<canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+<!-- TOP NAV — pill shaped centered -->
+<!-- Mobile menu for small screens -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#about" class="mob-link">About</a>
+    <a href="#skills" class="mob-link">Skills</a>
+    <a href="#projects" class="mob-link">Projects</a>
+    <a href="#education" class="mob-link">Education</a>
+    <a href="#contact" class="mob-link">Contact</a>
+  </div>
+
+<!-- ══ FLOATING DOCK ══ -->
+<div class="dock" role="navigation" aria-label="Quick navigation dock">
+  <a href="#about" class="dock-item" aria-label="About">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    <span class="dock-label">About</span>
+    <span class="dock-tip">About Me</span>
+  </a>
+  <a href="#skills" class="dock-item" aria-label="Skills">
+    <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+    <span class="dock-label">Skills</span>
+    <span class="dock-tip">Skills</span>
+  </a>
+  <a href="#projects" class="dock-item" aria-label="Projects">
+    <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+    <span class="dock-label">Projects</span>
+    <span class="dock-tip">Projects</span>
+  </a>
+  <a href="#education" class="dock-item" aria-label="Education">
+    <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    <span class="dock-label">Edu</span>
+    <span class="dock-tip">Education</span>
+  </a>
+  <a href="#contact" class="dock-item" aria-label="Contact">
+    <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.12 1.22 2 2 0 012.1 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+    <span class="dock-label">Contact</span>
+    <span class="dock-tip">Contact</span>
+  </a>
+  <div class="dock-divider"></div>
+  <button class="theme-toggle" id="themeBtn" aria-label="Toggle day/night theme">
+    <svg id="themeIcon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    <span id="themeLabel">Day</span>
+  </button>
+</div>
+
+<!-- PROJECT MODAL -->
+<div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-box" id="modalBox">
+    <button class="modal-close" id="modalClose" aria-label="Close modal">✕ CLOSE</button>
+    <div class="modal-num" id="modalNum"></div>
+    <div class="modal-tag" id="modalTag"></div>
+    <h2 class="modal-title" id="modalTitle"></h2>
+    <div class="modal-divider"></div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-section-title">TECH STACK</div>
+    <div class="modal-chips" id="modalChips"></div>
+    <div class="modal-section-title">KEY HIGHLIGHTS</div>
+    <div class="modal-body" id="modalHighlights"></div>
+    <div class="modal-links" id="modalLinks"></div>
+  </div>
+</div>
+
+<!-- ══ HERO ══ -->
+<section id="hero" aria-label="Introduction">
+  <div class="bg-icons" aria-hidden="true">
+    <span class="bicon" style="top:15%;left:8%;animation-duration:9s;animation-delay:0s;">☕</span>
+    <span class="bicon" style="top:20%;right:10%;animation-duration:11s;animation-delay:-3s;">🐙</span>
+    <span class="bicon" style="top:60%;left:5%;animation-duration:8s;animation-delay:-5s;">🗄️</span>
+    <span class="bicon" style="top:70%;right:8%;animation-duration:10s;animation-delay:-2s;">🍃</span>
+    <span class="bicon" style="top:40%;left:14%;animation-duration:12s;animation-delay:-7s;">🐍</span>
+    <span class="bicon" style="top:35%;right:14%;animation-duration:9.5s;animation-delay:-4s;">⚡</span>
+    <span class="bicon" style="top:80%;left:20%;animation-duration:13s;animation-delay:-1s;">🔧</span>
+    <span class="bicon" style="top:10%;left:40%;animation-duration:10s;animation-delay:-6s;">💻</span>
+    <span class="bicon" style="top:75%;right:22%;animation-duration:8.5s;animation-delay:-9s;">🧠</span>
+    <span class="bicon" style="top:50%;right:3%;animation-duration:11s;animation-delay:-8s;">📡</span>
+  </div>
+
+  <div class="hero-content">
+    <div class="terminal-tag">3rd Year CS Student · Open to Internship</div>
+    <h1 class="hero-name">
+      <span class="line1">Hi, I'm</span>
+      <span class="line2">Sumit Rathor</span>
+    </h1>
+    <div class="typing-wrapper">
+      <span class="typing-prefix">I am a</span>
+      <span class="typing-text" id="typingEl"><span class="typing-cursor"></span></span>
+    </div>
+    <p class="hero-desc"><b>3rd Year CS Student</b> at ITM Gwalior, graduating 2027. Passionate about Java, Machine Learning, and building things that actually work.</p>
+
+    <!-- Real language logo ticker -->
+    <div class="skills-ticker-wrap" aria-hidden="true">
+      <div class="skills-ticker">
+        <!-- set 1 -->
+        <span class="ticker-item">
+          <svg class="ti-svg" viewBox="0 0 128 128"><path fill="#f89820" d="M27.35 1.6l-4.74 17.37C20.9 25.5 21.6 31.83 24.56 37.2l50.94 90.45 8.64-5.04L33.98 31.76c-1.8-3.18-2.22-6.98-1.08-10.44L37.56 1.6z"/><path fill="#f89820" d="M45.84 1.6l-4.32 15.8c-1.44 5.22-.72 10.8 1.98 15.48l41.4 73.73 8.64-5.04-41.4-73.73c-1.62-2.88-2.1-6.3-1.3-9.54L54.96 1.6z"/><path fill="#5382a1" d="M64 73.5c-5.6 0-10.16 4.56-10.16 10.16 0 4.2 2.58 7.86 6.3 9.42l-3.6 13.14h14.76l-3.6-13.14c3.72-1.56 6.3-5.22 6.3-9.42C74.16 78.06 69.6 73.5 64 73.5z"/></svg>
+          Java
+          <span class="ti-dot"></span>
+        </span>
+        <span class="ticker-item">
+          <svg class="ti-svg" viewBox="0 0 128 128"><linearGradient id="py1" x1="70.252" y1="1236.021" x2="170.659" y2="1264.921" gradientUnits="userSpaceOnUse" gradientTransform="matrix(.563 0 0 .568 -29.215 -702.964)"><stop offset="0" stop-color="#5A9FD4"/><stop offset="1" stop-color="#306998"/></linearGradient><linearGradient id="py2" x1="209.474" y1="1098.811" x2="173.62" y2="1149.537" gradientUnits="userSpaceOnUse" gradientTransform="matrix(.563 0 0 .568 -29.215 -702.964)"><stop offset="0" stop-color="#FFD43B"/><stop offset="1" stop-color="#FFE873"/></linearGradient><path fill="url(#py1)" d="M63.391 1.988c-4.222.02-8.252.379-11.8 1.007-10.45 1.846-12.346 5.71-12.346 12.837v9.411h24.693v3.137H29.977c-7.176 0-13.46 4.313-15.426 12.521-2.268 9.405-2.368 15.275 0 25.096 1.755 7.311 5.947 12.519 13.124 12.519h8.491V67.234c0-8.151 7.051-15.34 15.426-15.34h24.665c6.866 0 12.346-5.654 12.346-12.548V15.833c0-6.693-5.646-11.72-12.346-12.837-4.244-.706-8.645-1.027-12.866-1.008zm-13.354 7.569c2.55 0 4.634 2.117 4.634 4.721 0 2.593-2.083 4.69-4.634 4.69-2.56 0-4.633-2.097-4.633-4.69-.001-2.604 2.073-4.721 4.633-4.721z"/><path fill="url(#py2)" d="M91.682 28.38v10.966c0 8.5-7.208 15.655-15.426 15.655H51.591c-6.756 0-12.346 5.783-12.346 12.549v23.515c0 6.691 5.818 10.628 12.346 12.547 7.816 2.297 15.312 2.713 24.665 0 6.216-1.801 12.346-5.423 12.346-12.547v-9.412H63.938v-3.138h37.012c7.176 0 9.852-5.005 12.348-12.519 2.578-7.735 2.467-15.174 0-25.096-1.774-7.145-5.161-12.521-12.348-12.521h-9.268zM77.809 87.927c2.561 0 4.634 2.097 4.634 4.692 0 2.602-2.074 4.719-4.634 4.719-2.55 0-4.633-2.117-4.633-4.719 0-2.595 2.083-4.692 4.633-4.692z"/></svg>
+          Python
+          <span class="ti-dot"></span>
+        </span>
+        <span class="ticker-item">
+          <svg class="ti-svg" viewBox="0 0 128 128"><path fill="#659AD3" d="M117.5 33.5l.3-.2c-.6-1.1-1.5-2.1-2.4-2.6L67.1 2.9c-.8-.5-1.9-.7-3.1-.7-1.2 0-2.3.3-3.1.7l-48 27.9c-1.7 1-2.9 3.5-2.9 5.4v55.7c0 1.1.2 2.4.9 3.5l.2-.1 4.1 2.4-.2.3c.3.2.6.4.9.5l48.3 27.9c.8.5 1.9.7 3.1.7 1.2 0 2.3-.3 3.1-.7l48-27.9c1.7-1 2.9-3.5 2.9-5.4V36.1c.1-.9-.1-1.9-.8-2.6z"/><path fill="#fff" d="M64 8.5L114.7 38v59L64 126.5 13.3 97V38z"/><path d="M64 16.2L19.1 41.8v51.5L64 118.8l44.9-25.5V41.8z" fill="#659AD3"/><path d="M64 40.5c-13 0-23.5 10.5-23.5 23.5S51 87.5 64 87.5 87.5 77 87.5 64 77 40.5 64 40.5zm0 40c-9.1 0-16.5-7.4-16.5-16.5S54.9 47.5 64 47.5 80.5 54.9 80.5 64 73.1 80.5 64 80.5z" fill="#fff"/></svg>
+          C++
+          <span class="ti-dot"></span>
+        </span>
+        <span class="ticker-item">
+          <svg class="ti-svg" viewBox="0 0 128 128"><path fill="#00758f" d="M116.948 97.807c-6.863-.187-11.575.45-15.704 2.163-1.208.5-3.138.5-3.337 1.919.663.675.75 1.688 1.25 2.544 1 1.587 2.669 3.712 4.25 4.831 1.706 1.188 3.45 2.45 5.225 3.481 3.237 1.906 6.887 3 10.05 4.888 1.862 1.112 3.675 2.5 5.562 3.587.906.531 1.519 1.337 2.625 1.681v-.187c-.587-.75-.75-1.769-1.312-2.581l-2.438-2.438c-2.394-3.181-5.387-5.987-8.625-8.25-2.606-1.862-8.263-4.3-9.338-7.244l-.187-.181c1.812-.2 3.944-.837 5.625-1.337 2.819-.75 5.325-.562 8.244-1.312l3.906-1.138v-.725c-1.45-1.5-2.494-3.506-4.044-4.894-4.1-3.494-8.613-6.987-13.213-9.862-2.556-1.625-5.744-2.669-8.45-4.019-.919-.469-2.531-.712-3.125-1.500-1.438-1.825-2.219-4.138-3.312-6.213-2.313-4.394-4.581-9.175-6.606-13.756-1.394-3.131-2.313-6.244-4.019-9.1-8.287-13.619-17.2-21.85-30.994-29.937-2.938-1.694-6.487-2.369-10.225-3.25l-6.037-.35c-1.25-.544-2.538-2.125-3.656-2.844-4.644-2.906-16.569-9.219-19.981-.312-2.188 5.594 3.275 11.075 5.156 13.944 1.331 1.981 3.037 4.2 3.981 6.406.625 1.45.75 2.913 1.312 4.431 1.363 3.706 2.544 7.769 4.3 11.244 .881 1.762 1.85 3.612 2.963 5.206.675.975 1.825 1.406 2.025 2.994-1.137 1.594-1.2 4.069-1.837 6.069-2.869 9.069-.562 20.319 2.375 26.994.887 2.012 2.994 6.469 5.812 4.775 2.494-1.487 1.937-4.937 2.644-8.225.163-.794.062-1.337.437-1.838v.144c.875 1.756 1.75 3.5 2.563 5.269 1.894 3.088 5.244 6.306 8.025 8.463 1.462 1.119 2.612 3.056 4.462 3.744v-.194h-.131c-.363-.556-.919-.794-1.388-1.2-1.094-1.063-2.3-2.381-3.156-3.587-2.5-3.387-4.712-7.112-6.688-10.963-.956-1.831-1.781-3.844-2.594-5.712-.312-.694-.312-1.744-1-.025-1.025 2.5-1.312 4.988-1.662 7.981-.244.225-.131.113-.269.338-1.881-.469-2.538-2.363-3.231-4.006-1.762-4.213-2.087-11-.55-15.875.412-1.281 2.244-5.306 1.544-6.531-.363-1.169-1.563-1.85-2.219-2.781-1-.119-1.312-1.338-1.762-2.25-.013-.031-.044-.006-.056-.037-1.563-3.156-2.781-6.581-3.75-10.113-1.75-6.375-.062-13.194 2.069-17.294.875 1.831 1.75 3.663 2.594 5.45 2.225 4.637 4.444 9.219 6.731 13.8 1.131 2.269 2.275 4.294 3.831 6.156.619.744.925 1.844 1.644 2.288-.019.006-.025.019-.044.025 1.188 1.062 2.231 2.4 3.438 3.531 2.863 2.669 5.981 5.025 9.012 7.506l6.65 4.269.006-.006-.006.006c.662.4 1.344.756 2.012 1.125 1.156 3.937 1.344 8.1 2.062 12.3 2.544 14.875 9.012 24.137 21.494 29.419 1.256.537 2.619.756 4.006 1.019 2.675.075 5.469.15 8.019-.056l4.144-1.781c1.444-.669 2.75-1.356 3.944-2.244 3.313-2.431 5.281-5.875 5.75-10.225-.144.013-.269 0-.394 0v.194z"/><path fill="#00758f" d="M27.4 22.813c-1.244.02-2.125.156-3.069.375v.131h.125c.594 1.25 1.644 2.063 2.438 3.125.594 1.25 1.156 2.5 1.75 3.75l.131-.131c1.094-.769 1.594-2 1.562-3.75-.437-.469-.5-1-.875-1.5-.5-.7-1.469-1.094-2.062-2z"/></svg>
+          MySQL
+          <span class="ti-dot"></span>
+        </span>
+        <span class="ticker-item">
+          <svg class="ti-svg" viewBox="0 0 128 128"><path d="M116.452 6.643H11.956C8.971 6.643 6.549 9.065 6.549 12.05v104.552c0 2.985 2.422 5.407 5.407 5.407h104.496c2.985 0 5.407-2.422 5.407-5.407V12.05c0-2.985-2.422-5.407-5.407-5.407z" fill="#f44d27"/><path d="M48.598 106.514l-2.754-6.805H29.32l-2.697 6.805H17.7L34.858 63.48h8.788l17.1 43.034H48.6zm-5.262-14.308l-5.984-15.453-5.87 15.453h11.854zM72.957 106.514V71.122h-13.13V63.48h35.24v7.642H81.93v35.392H72.957zM104.72 106.514V63.48h8.973v43.034H104.72z" fill="#fff"/></svg>
+          ATI
+          <span class="ti-dot"></span>
+        </span>
+        <span class="ticker-item">
+          <!-- GitHub icon -->
+          <svg class="ti-svg" viewBox="0 0 128 128"><path fill="#fff" d="M64 5.103c-33.347 0-60.388 27.035-60.388 60.388 0 26.682 17.303 49.317 41.297 57.303 3.017.56 4.125-1.31 4.125-2.905 0-1.44-.056-6.197-.082-11.243-16.8 3.653-20.345-7.125-20.345-7.125-2.747-6.98-6.705-8.836-6.705-8.836-5.48-3.748.413-3.67.413-3.67 6.063.425 9.257 6.223 9.257 6.223 5.386 9.23 14.127 6.562 17.573 5.02.542-3.903 2.107-6.568 3.834-8.076-13.413-1.525-27.514-6.704-27.514-29.843 0-6.593 2.36-11.98 6.223-16.21-.628-1.52-2.695-7.662.584-15.98 0 0 5.07-1.623 16.61 6.19C53.7 35 58.867 34.327 64 34.304c5.13.023 10.3.694 15.127 2.033 11.526-7.813 16.59-6.19 16.59-6.19 3.287 8.317 1.22 14.46.593 15.98 3.872 4.23 6.215 9.617 6.215 16.21 0 23.194-14.127 28.3-27.574 29.796 2.167 1.874 4.097 5.55 4.097 11.183 0 8.08-.07 14.583-.07 16.572 0 1.607 1.088 3.49 4.148 2.897 23.98-7.994 41.263-30.622 41.263-57.294C124.388 32.14 97.35 5.104 64 5.104z"/></svg>
+          GitHub
+          <span class="ti-dot"></span>
+        </span>
+        <span class="ticker-item">
+          <!-- Spring Boot leaf -->
+          <svg class="ti-svg" viewBox="0 0 128 128"><path fill="#77bc1f" d="M112.109 12.44C101.591 4.488 88.449.584 74.9.07c-9.366-.346-18.627 1.4-27.377 5.206C33.985 11.189 22.99 21.37 15.765 34.076 8.54 46.783 5.584 61.57 7.288 75.972c1.685 14.218 7.72 27.708 17.178 38.456 9.437 10.72 21.8 18.458 35.4 22.196 13.796 3.78 28.527 3.305 42.107-.895 12.693-3.93 24.148-11.462 32.5-21.57l.205-.26c-10.234 8.24-22.935 12.96-35.992 13.316-7.48.204-14.95-1.008-22.012-3.538-14.01-5.02-25.706-15.263-32.737-28.38a62.35 62.35 0 01-6.894-26.38c-.43-9.438 1.638-18.96 5.985-27.468C49.42 31.45 58.46 23.63 69.16 19.192c10.701-4.44 22.627-5.263 33.832-2.327 9.28 2.416 17.73 7.502 24.185 14.6-4.19-8.01-10.006-15.077-15.068-19.025z"/><path fill="#77bc1f" d="M116.124 47.49c-2.066-8.168-6.286-15.71-12.162-21.742-5.85-5.99-13.218-10.36-21.206-12.646-8.183-2.35-16.886-2.414-25.087-.19-8.03 2.18-15.408 6.602-21.224 12.73C30.63 31.762 26.444 39.455 24.62 47.7c-1.832 8.3-1.22 16.98 1.768 24.934 2.97 7.9 8.12 14.867 14.847 19.99 6.68 5.083 14.694 8.217 23.047 9.064 4.14.424 8.316.313 12.433-.37 4.25-.71 8.386-2.033 12.25-3.953 7.648-3.84 14.11-9.814 18.465-17.14 4.337-7.29 6.48-15.71 6.162-24.13a48.197 48.197 0 00-1.468-8.604z"/></svg>
+          Spring
+          <span class="ti-dot"></span>
+        </span>
+        <span class="ticker-item">
+          <!-- HTML5 -->
+          <svg class="ti-svg" viewBox="0 0 128 128"><path fill="#e44d26" d="M19.037 113.876L9.032 1.627h109.936l-10.016 112.228-45.019 12.48z"/><path fill="#f16529" d="M64 116.8l36.378-10.086 8.559-95.878H64z"/><path fill="#ebebeb" d="M64 52.455H45.788L44.53 38.361H64V24.599H29.489l.33 3.692 3.382 37.927H64zm0 35.743l-.061.017-15.327-4.14-.979-10.975H33.816l1.928 21.609 28.193 7.826.063-.017z"/><path fill="#fff" d="M63.952 52.455v13.763h16.947l-1.597 17.849-15.35 4.143v14.319l28.215-7.82.207-2.325 3.234-36.233.336-3.696h-3.708zm0-27.856v13.762h33.244l.276-3.092.628-6.978.329-3.692z"/></svg>
+          HTML5
+          <span class="ti-dot"></span>
+        </span>
+        <span class="ticker-item">
+          <!-- CSS3 -->
+          <svg class="ti-svg" viewBox="0 0 128 128"><path fill="#1572b6" d="M18.814 114.123L8.76 1.352h110.48l-10.064 112.754-45.243 12.543-45.119-12.526z"/><path fill="#33a9dc" d="M64.001 117.062l36.559-10.136 8.601-96.354H64.001v106.49z"/><path fill="#fff" d="M64.001 51.429h18.302l1.264-14.163H64.001V23.435h34.682l-.332 3.711-3.4 38.114h-30.95V51.429z"/><path fill="#ebebeb" d="M64.083 87.349l-.061.018-15.403-4.159-.985-11.031H33.752l1.937 21.717 28.331 7.863.063-.018v-14.39z"/><path fill="#fff" d="M81.127 64.675l-1.666 18.522-15.426 4.164v14.39l28.354-7.858.208-2.337 2.406-26.881H81.127z"/><path fill="#ebebeb" d="M64.048 23.435v13.831H30.64l-.277-3.108-.63-7.012-.331-3.711h34.646zm-.047 27.994v13.831H45.666l-.277-3.108-.631-7.012-.33-3.711h19.573z"/></svg>
+          CSS3
+          <span class="ti-dot"></span>
+        </span>
+        <span class="ticker-item">
+          <!-- JS -->
+          <svg class="ti-svg" viewBox="0 0 128 128"><path fill="#f7df1e" d="M1.408 1.408h125.184v125.185H1.408z"/><path fill="#323330" d="M116.347 96.736c-.917-5.711-4.641-10.348-13.084-14.745-3.208-1.57-6.853-2.668-7.911-5.159-.36-1.676-.484-2.065-.484-3.224.484-3.368 3.52-4.641 6.328-3.724 1.644.539 3.149 1.89 4.061 4.292 4.293-2.809 4.293-2.809 7.293-4.733-1.157-1.727-1.644-2.354-2.354-3.09-2.538-2.943-5.979-4.54-11.5-4.417l-2.853.355c-2.717.783-5.305 2.401-6.853 4.562-4.417 5.978-3.151 16.408 2.291 20.818 5.575 4.785 13.748 5.798 14.878 10.166.483 2.670-1.212 5.381-4.046 6.115-3.637.917-7.186-.428-9.31-3.234l-7.695 4.426c1.88 3.786 4.723 6.549 8.295 8.162 3.57 1.646 7.65 2.053 12.014 1.166 6.88-1.44 11.484-6.24 12.81-13.35zm-38.06-46.95c-.107-2.162-.48-4.255-1.328-6.104-2.536-5.764-8.914-8.43-15.256-7.43-6.35 1.002-11.082 5.785-11.46 11.46-.246 3.737.81 6.498 2.945 8.916l3.35 3.4c1.95 1.773 4.293 3.053 5.978 4.945 2.27 2.565 2.943 5.638 1.866 8.67-1.157 3.368-4.369 5.36-7.918 5.052-3.906-.357-6.658-3.031-7.186-7.052l-8.48 1.396c.483 4.94 2.943 9.187 6.965 11.726 3.906 2.45 8.936 3.012 13.638 1.56 5.15-1.554 8.916-5.638 9.987-10.975 1.073-5.388-.54-10.003-5.088-14.104-2.271-1.977-4.832-3.59-7.293-5.359-1.37-.996-2.4-2.137-3.041-3.459-.968-2.017-.754-4.244.45-5.98 1.15-1.676 3.25-2.617 5.522-2.617 2.162 0 4.217.917 5.493 2.539.593.754 1.042 1.688 1.328 2.76z"/></svg>
+          JavaScript
+          <span class="ti-dot"></span>
+        </span>
+        <!-- duplicate set for infinite scroll -->
+        <span class="ticker-item">
+          <svg class="ti-svg" viewBox="0 0 128 128"><path fill="#f89820" d="M27.35 1.6l-4.74 17.37C20.9 25.5 21.6 31.83 24.56 37.2l50.94 90.45 8.64-5.04L33.98 31.76c-1.8-3.18-2.22-6.98-1.08-10.44L37.56 1.6z"/><path fill="#f89820" d="M45.84 1.6l-4.32 15.8c-1.44 5.22-.72 10.8 1.98 15.48l41.4 73.73 8.64-5.04-41.4-73.73c-1.62-2.88-2.1-6.3-1.3-9.54L54.96 1.6z"/><path fill="#5382a1" d="M64 73.5c-5.6 0-10.16 4.56-10.16 10.16 0 4.2 2.58 7.86 6.3 9.42l-3.6 13.14h14.76l-3.6-13.14c3.72-1.56 6.3-5.22 6.3-9.42C74.16 78.06 69.6 73.5 64 73.5z"/></svg>
+          Java<span class="ti-dot"></span>
+        </span>
+        <span class="ticker-item">
+          <svg class="ti-svg" viewBox="0 0 128 128"><linearGradient id="py1b" x1="70.252" y1="1236.021" x2="170.659" y2="1264.921" gradientUnits="userSpaceOnUse" gradientTransform="matrix(.563 0 0 .568 -29.215 -702.964)"><stop offset="0" stop-color="#5A9FD4"/><stop offset="1" stop-color="#306998"/></linearGradient><linearGradient id="py2b" x1="209.474" y1="1098.811" x2="173.62" y2="1149.537" gradientUnits="userSpaceOnUse" gradientTransform="matrix(.563 0 0 .568 -29.215 -702.964)"><stop offset="0" stop-color="#FFD43B"/><stop offset="1" stop-color="#FFE873"/></linearGradient><path fill="url(#py1b)" d="M63.391 1.988c-4.222.02-8.252.379-11.8 1.007-10.45 1.846-12.346 5.71-12.346 12.837v9.411h24.693v3.137H29.977c-7.176 0-13.46 4.313-15.426 12.521-2.268 9.405-2.368 15.275 0 25.096 1.755 7.311 5.947 12.519 13.124 12.519h8.491V67.234c0-8.151 7.051-15.34 15.426-15.34h24.665c6.866 0 12.346-5.654 12.346-12.548V15.833c0-6.693-5.646-11.72-12.346-12.837-4.244-.706-8.645-1.027-12.866-1.008zm-13.354 7.569c2.55 0 4.634 2.117 4.634 4.721 0 2.593-2.083 4.69-4.634 4.69-2.56 0-4.633-2.097-4.633-4.69-.001-2.604 2.073-4.721 4.633-4.721z"/><path fill="url(#py2b)" d="M91.682 28.38v10.966c0 8.5-7.208 15.655-15.426 15.655H51.591c-6.756 0-12.346 5.783-12.346 12.549v23.515c0 6.691 5.818 10.628 12.346 12.547 7.816 2.297 15.312 2.713 24.665 0 6.216-1.801 12.346-5.423 12.346-12.547v-9.412H63.938v-3.138h37.012c7.176 0 9.852-5.005 12.348-12.519 2.578-7.735 2.467-15.174 0-25.096-1.774-7.145-5.161-12.521-12.348-12.521h-9.268zM77.809 87.927c2.561 0 4.634 2.097 4.634 4.692 0 2.602-2.074 4.719-4.634 4.719-2.55 0-4.633-2.117-4.633-4.719 0-2.595 2.083-4.692 4.633-4.692z"/></svg>
+          Python<span class="ti-dot"></span>
+        </span>
+        <span class="ticker-item">
+          <svg class="ti-svg" viewBox="0 0 128 128"><path fill="#659AD3" d="M117.5 33.5l.3-.2c-.6-1.1-1.5-2.1-2.4-2.6L67.1 2.9c-.8-.5-1.9-.7-3.1-.7-1.2 0-2.3.3-3.1.7l-48 27.9c-1.7 1-2.9 3.5-2.9 5.4v55.7c0 1.1.2 2.4.9 3.5l.2-.1 4.1 2.4-.2.3c.3.2.6.4.9.5l48.3 27.9c.8.5 1.9.7 3.1.7 1.2 0 2.3-.3 3.1-.7l48-27.9c1.7-1 2.9-3.5 2.9-5.4V36.1c.1-.9-.1-1.9-.8-2.6z"/><path fill="#fff" d="M64 8.5L114.7 38v59L64 126.5 13.3 97V38z"/><path d="M64 16.2L19.1 41.8v51.5L64 118.8l44.9-25.5V41.8z" fill="#659AD3"/><path d="M64 40.5c-13 0-23.5 10.5-23.5 23.5S51 87.5 64 87.5 87.5 77 87.5 64 77 40.5 64 40.5zm0 40c-9.1 0-16.5-7.4-16.5-16.5S54.9 47.5 64 47.5 80.5 54.9 80.5 64 73.1 80.5 64 80.5z" fill="#fff"/></svg>
+          C++<span class="ti-dot"></span>
+        </span>
+        <span class="ticker-item">
+          <svg class="ti-svg" viewBox="0 0 128 128"><path fill="#00758f" d="M116.948 97.807c-6.863-.187-11.575.45-15.704 2.163-1.208.5-3.138.5-3.337 1.919.663.675.75 1.688 1.25 2.544 1 1.587 2.669 3.712 4.25 4.831 1.706 1.188 3.45 2.45 5.225 3.481 3.237 1.906 6.887 3 10.05 4.888 1.862 1.112 3.675 2.5 5.562 3.587.906.531 1.519 1.337 2.625 1.681v-.187c-.587-.75-.75-1.769-1.312-2.581l-2.438-2.438c-2.394-3.181-5.387-5.987-8.625-8.25-2.606-1.862-8.263-4.3-9.338-7.244l-.187-.181c1.812-.2 3.944-.837 5.625-1.337 2.819-.75 5.325-.562 8.244-1.312l3.906-1.138v-.725c-1.45-1.5-2.494-3.506-4.044-4.894-4.1-3.494-8.613-6.987-13.213-9.862-2.556-1.625-5.744-2.669-8.45-4.019-.919-.469-2.531-.712-3.125-1.5-1.438-1.825-2.219-4.138-3.312-6.213-2.313-4.394-4.581-9.175-6.606-13.756-1.394-3.131-2.313-6.244-4.019-9.1-8.287-13.619-17.2-21.85-30.994-29.937-2.938-1.694-6.487-2.369-10.225-3.25l-6.037-.35c-1.25-.544-2.538-2.125-3.656-2.844-4.644-2.906-16.569-9.219-19.981-.312-2.188 5.594 3.275 11.075 5.156 13.944 1.331 1.981 3.037 4.2 3.981 6.406.625 1.45.75 2.913 1.312 4.431 1.363 3.706 2.544 7.769 4.3 11.244.881 1.762 1.85 3.612 2.963 5.206.675.975 1.825 1.406 2.025 2.994-1.137 1.594-1.2 4.069-1.837 6.069-2.869 9.069-.562 20.319 2.375 26.994.887 2.012 2.994 6.469 5.812 4.775 2.494-1.487 1.937-4.937 2.644-8.225.163-.794.062-1.337.437-1.838v.144c.875 1.756 1.75 3.5 2.563 5.269 1.894 3.088 5.244 6.306 8.025 8.463 1.462 1.119 2.612 3.056 4.462 3.744v-.194h-.131c-.363-.556-.919-.794-1.388-1.2-1.094-1.063-2.3-2.381-3.156-3.587-2.5-3.387-4.712-7.112-6.688-10.963-.956-1.831-1.781-3.844-2.594-5.712-.312-.694-.312-1.744-1-.025-1.025 2.5-1.312 4.988-1.662 7.981-.244.225-.131.113-.269.338-1.881-.469-2.538-2.363-3.231-4.006-1.762-4.213-2.087-11-.55-15.875.412-1.281 2.244-5.306 1.544-6.531-.363-1.169-1.563-1.85-2.219-2.781-1-.119-1.312-1.338-1.762-2.25-.013-.031-.044-.006-.056-.037-1.563-3.156-2.781-6.581-3.75-10.113-1.75-6.375-.062-13.194 2.069-17.294.875 1.831 1.75 3.663 2.594 5.45 2.225 4.637 4.444 9.219 6.731 13.8 1.131 2.269 2.275 4.294 3.831 6.156.619.744.925 1.844 1.644 2.288-.019.006-.025.019-.044.025 1.188 1.062 2.231 2.4 3.438 3.531 2.863 2.669 5.981 5.025 9.012 7.506l6.65 4.269.006-.006-.006.006c.662.4 1.344.756 2.012 1.125 1.156 3.937 1.344 8.1 2.062 12.3 2.544 14.875 9.012 24.137 21.494 29.419 1.256.537 2.619.756 4.006 1.019 2.675.075 5.469.15 8.019-.056l4.144-1.781c1.444-.669 2.75-1.356 3.944-2.244 3.313-2.431 5.281-5.875 5.75-10.225-.144.013-.269 0-.394 0v.194z"/></svg>
+          MySQL<span class="ti-dot"></span>
+        </span>
+        <span class="ticker-item">
+          <svg class="ti-svg" viewBox="0 0 128 128"><path fill="#77bc1f" d="M112.109 12.44C101.591 4.488 88.449.584 74.9.07c-9.366-.346-18.627 1.4-27.377 5.206C33.985 11.189 22.99 21.37 15.765 34.076 8.54 46.783 5.584 61.57 7.288 75.972c1.685 14.218 7.72 27.708 17.178 38.456 9.437 10.72 21.8 18.458 35.4 22.196 13.796 3.78 28.527 3.305 42.107-.895 12.693-3.93 24.148-11.462 32.5-21.57l.205-.26c-10.234 8.24-22.935 12.96-35.992 13.316-7.48.204-14.95-1.008-22.012-3.538-14.01-5.02-25.706-15.263-32.737-28.38a62.35 62.35 0 01-6.894-26.38c-.43-9.438 1.638-18.96 5.985-27.468C49.42 31.45 58.46 23.63 69.16 19.192c10.701-4.44 22.627-5.263 33.832-2.327 9.28 2.416 17.73 7.502 24.185 14.6-4.19-8.01-10.006-15.077-15.068-19.025z"/></svg>
+          Spring<span class="ti-dot"></span>
+        </span>
+        <span class="ticker-item">
+          <svg class="ti-svg" viewBox="0 0 128 128"><path fill="#fff" d="M64 5.103c-33.347 0-60.388 27.035-60.388 60.388 0 26.682 17.303 49.317 41.297 57.303 3.017.56 4.125-1.31 4.125-2.905 0-1.44-.056-6.197-.082-11.243-16.8 3.653-20.345-7.125-20.345-7.125-2.747-6.98-6.705-8.836-6.705-8.836-5.48-3.748.413-3.67.413-3.67 6.063.425 9.257 6.223 9.257 6.223 5.386 9.23 14.127 6.562 17.573 5.02.542-3.903 2.107-6.568 3.834-8.076-13.413-1.525-27.514-6.704-27.514-29.843 0-6.593 2.36-11.98 6.223-16.21-.628-1.52-2.695-7.662.584-15.98 0 0 5.07-1.623 16.61 6.19C53.7 35 58.867 34.327 64 34.304c5.13.023 10.3.694 15.127 2.033 11.526-7.813 16.59-6.19 16.59-6.19 3.287 8.317 1.22 14.46.593 15.98 3.872 4.23 6.215 9.617 6.215 16.21 0 23.194-14.127 28.3-27.574 29.796 2.167 1.874 4.097 5.55 4.097 11.183 0 8.08-.07 14.583-.07 16.572 0 1.607 1.088 3.49 4.148 2.897 23.98-7.994 41.263-30.622 41.263-57.294C124.388 32.14 97.35 5.104 64 5.104z"/></svg>
+          GitHub<span class="ti-dot"></span>
+        </span>
+        <span class="ticker-item">
+          <svg class="ti-svg" viewBox="0 0 128 128"><path fill="#e44d26" d="M19.037 113.876L9.032 1.627h109.936l-10.016 112.228-45.019 12.48z"/><path fill="#f16529" d="M64 116.8l36.378-10.086 8.559-95.878H64z"/><path fill="#ebebeb" d="M64 52.455H45.788L44.53 38.361H64V24.599H29.489l.33 3.692 3.382 37.927H64zm0 35.743l-.061.017-15.327-4.14-.979-10.975H33.816l1.928 21.609 28.193 7.826.063-.017z"/><path fill="#fff" d="M63.952 52.455v13.763h16.947l-1.597 17.849-15.35 4.143v14.319l28.215-7.82.207-2.325 3.234-36.233.336-3.696h-3.708zm0-27.856v13.762h33.244l.276-3.092.628-6.978.329-3.692z"/></svg>
+          HTML5<span class="ti-dot"></span>
+        </span>
+        <span class="ticker-item">
+          <svg class="ti-svg" viewBox="0 0 128 128"><path fill="#f7df1e" d="M1.408 1.408h125.184v125.185H1.408z"/><path fill="#323330" d="M116.347 96.736c-.917-5.711-4.641-10.348-13.084-14.745-3.208-1.57-6.853-2.668-7.911-5.159-.36-1.676-.484-2.065-.484-3.224.484-3.368 3.52-4.641 6.328-3.724 1.644.539 3.149 1.89 4.061 4.292 4.293-2.809 4.293-2.809 7.293-4.733-1.157-1.727-1.644-2.354-2.354-3.09-2.538-2.943-5.979-4.54-11.5-4.417l-2.853.355c-2.717.783-5.305 2.401-6.853 4.562-4.417 5.978-3.151 16.408 2.291 20.818 5.575 4.785 13.748 5.798 14.878 10.166.483 2.670-1.212 5.381-4.046 6.115-3.637.917-7.186-.428-9.31-3.234l-7.695 4.426c1.88 3.786 4.723 6.549 8.295 8.162 3.57 1.646 7.65 2.053 12.014 1.166 6.88-1.44 11.484-6.24 12.81-13.35zm-38.06-46.95c-.107-2.162-.48-4.255-1.328-6.104-2.536-5.764-8.914-8.43-15.256-7.43-6.35 1.002-11.082 5.785-11.46 11.46-.246 3.737.81 6.498 2.945 8.916l3.35 3.4c1.95 1.773 4.293 3.053 5.978 4.945 2.27 2.565 2.943 5.638 1.866 8.67-1.157 3.368-4.369 5.36-7.918 5.052-3.906-.357-6.658-3.031-7.186-7.052l-8.48 1.396c.483 4.94 2.943 9.187 6.965 11.726 3.906 2.45 8.936 3.012 13.638 1.56 5.15-1.554 8.916-5.638 9.987-10.975 1.073-5.388-.54-10.003-5.088-14.104-2.271-1.977-4.832-3.59-7.293-5.359-1.37-.996-2.4-2.137-3.041-3.459-.968-2.017-.754-4.244.45-5.98 1.15-1.676 3.25-2.617 5.522-2.617 2.162 0 4.217.917 5.493 2.539.593.754 1.042 1.688 1.328 2.76z"/></svg>
+          JS<span class="ti-dot"></span>
+        </span>
+      </div>
+    </div>
+    <div class="hero-cta">
+      <a href="#projects" class="btn-primary">View Projects</a>
+      <a href="#contact" class="btn-outline">Contact Me</a>
+    </div>
+  </div>
+  <div class="scroll-hint" aria-hidden="true"><span>SCROLL</span><div class="scroll-arrow"></div></div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" aria-label="About Me">
+  <div class="reveal"><div class="sec-label">About Me</div><h2 class="sec-title">Who <span class="hl">I Am</span></h2></div>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p>I'm a <b>3rd Year Computer Science student</b> at the Institute of Technology & Management, Gwalior, expected to graduate in 2027.</p>
+      <p>My work spans <b>machine learning research</b>, web development, and software engineering. I enjoy solving complex problems and turning ideas into working products.</p>
+      <p>Currently open to <b>internship opportunities</b> where I can grow fast, contribute meaningfully, and gain real-world experience.</p>
+    </div>
+    <div class="stats-grid reveal">
+      <div class="stat-box"><div class="stat-num">5+</div><div class="stat-label">Languages</div></div>
+      <div class="stat-box"><div class="stat-num">3+</div><div class="stat-label">Projects</div></div>
+      <div class="stat-box"><div class="stat-num">3rd</div><div class="stat-label">Year Student</div></div>
+      <div class="stat-box"><div class="stat-num">∞</div><div class="stat-label">Curiosity</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills" aria-label="Skills">
+  <div class="reveal"><div class="sec-label">Skills</div><h2 class="sec-title">What I <span class="hl">Know</span></h2></div>
+  <div class="skills-grid reveal">
+    <div class="skill-group"><div class="sg-icon">☕</div><div class="sg-title">Java Ecosystem</div>
+      <div class="skill-bar-row"><div class="skill-bar-top"><span>Core Java</span><span>90%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" data-w="0.9"></div></div></div>
+      <div class="skill-bar-row"><div class="skill-bar-top"><span>OOP & Design Patterns</span><span>85%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" data-w="0.85"></div></div></div>
+      <div class="skill-bar-row"><div class="skill-bar-top"><span>Data Structures</span><span>80%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" data-w="0.8"></div></div></div>
+      <div class="skill-bar-row"><div class="skill-bar-top"><span>Collections & Streams</span><span>75%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" data-w="0.75"></div></div></div>
+    </div>
+    <div class="skill-group"><div class="sg-icon">🧠</div><div class="sg-title">Python & ML</div>
+      <div class="skill-bar-row"><div class="skill-bar-top"><span>Python</span><span>85%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill b2" data-w="0.85"></div></div></div>
+      <div class="skill-bar-row"><div class="skill-bar-top"><span>Machine Learning</span><span>75%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill b2" data-w="0.75"></div></div></div>
+      <div class="skill-bar-row"><div class="skill-bar-top"><span>Sentiment Analysis</span><span>80%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill b2" data-w="0.8"></div></div></div>
+      <div class="skill-bar-row"><div class="skill-bar-top"><span>NLP / VADER</span><span>72%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill b2" data-w="0.72"></div></div></div>
+    </div>
+    <div class="skill-group"><div class="sg-icon">⚡</div><div class="sg-title">Systems & Web</div>
+      <div class="skill-bar-row"><div class="skill-bar-top"><span>C / C++</span><span>75%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill b3" data-w="0.75"></div></div></div>
+      <div class="skill-bar-row"><div class="skill-bar-top"><span>HTML / CSS</span><span>80%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill b3" data-w="0.8"></div></div></div>
+      <div class="skill-bar-row"><div class="skill-bar-top"><span>JavaScript</span><span>65%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill b3" data-w="0.65"></div></div></div>
+    </div>
+    <div class="skill-group"><div class="sg-icon">🛠️</div><div class="sg-title">Tools & Soft Skills</div>
+      <div class="skill-bar-row"><div class="skill-bar-top"><span>Git & GitHub</span><span>78%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill b4" data-w="0.78"></div></div></div>
+      <div class="skill-bar-row"><div class="skill-bar-top"><span>Problem Solving</span><span>85%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill b4" data-w="0.85"></div></div></div>
+      <div class="skill-bar-row"><div class="skill-bar-top"><span>Fundraising & Leadership</span><span>80%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill b4" data-w="0.8"></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" aria-label="Projects">
+  <div class="reveal"><div class="sec-label">Projects</div><h2 class="sec-title">What I've <span class="hl">Built</span></h2></div>
+  <p class="reveal" style="font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--muted);letter-spacing:2px;margin-top:12px;">// Click any project card for full details</p>
+  <div class="projects-grid reveal">
+
+    <div class="project-card" role="button" tabindex="0" aria-label="View project: Sentiment-Enhanced Movie Recommender"
+      data-num="01"
+      data-tag="ML · NLP · Research"
+      data-title="Sentiment-Enhanced Movie Recommender"
+      data-body="A hybrid recommendation system that combines multiple ML techniques to deliver smarter, sentiment-aware movie suggestions. Instead of relying on ratings alone, the system integrates how users feel about films through natural language processing of reviews."
+      data-chips="Python,VADER,TF-IDF,Collaborative Filtering,Google Colab,Scikit-learn,Pandas,NumPy"
+      data-highlights="Developed a novel 'Sentiment Lift' metric as an original research contribution. Combined TF-IDF content analysis with VADER sentiment scoring to re-rank recommendations. Achieved improved precision over baseline collaborative filtering alone."
+      data-links="github:https://github.com/Sumit034-ai">
+      <div class="proj-num">01</div>
+      <div class="proj-tag">ML · NLP · Research</div>
+      <div class="proj-title">Sentiment-Enhanced Movie Recommender</div>
+      <p class="proj-desc">Hybrid recommendation system combining collaborative filtering, TF-IDF content analysis, and VADER sentiment. Features a custom "Sentiment Lift" metric.</p>
+      <div class="proj-chips"><span class="pchip">Python</span><span class="pchip">VADER</span><span class="pchip">TF-IDF</span><span class="pchip">Collab Filtering</span><span class="pchip">Colab</span></div>
+      <div class="proj-click-hint">↗ Click for full details</div>
+    </div>
+
+    <div class="project-card" role="button" tabindex="0" aria-label="View project: Sentiment Analysis with ML"
+      data-num="02"
+      data-tag="ML · Python · NLP"
+      data-title="Sentiment Analysis with ML"
+      data-body="A machine learning project for classifying and understanding sentiment from raw text data. The system processes user reviews and classifies them as positive, negative, or neutral using trained ML models with strong real-world accuracy."
+      data-chips="Python,Machine Learning,NLP,Scikit-learn,NLTK,Classification,Pandas"
+      data-highlights="Implemented and compared multiple classification algorithms. Applied text preprocessing including tokenization, stop-word removal, and stemming. Evaluated model performance using precision, recall, and F1-score metrics."
+      data-links="github:https://github.com/Sumit034-ai">
+      <div class="proj-num">02</div>
+      <div class="proj-tag">ML · Python</div>
+      <div class="proj-title">Sentiment Analysis with ML</div>
+      <p class="proj-desc">Machine learning project for classifying and understanding sentiment from text data. Built in Python with focus on real-world accuracy and performance.</p>
+      <div class="proj-chips"><span class="pchip">Python</span><span class="pchip">ML</span><span class="pchip">NLP</span><span class="pchip">Classification</span></div>
+      <div class="proj-click-hint">↗ Click for full details</div>
+    </div>
+
+    <div class="project-card" role="button" tabindex="0" aria-label="View project: Web Projects"
+      data-num="03"
+      data-tag="Web Development · Frontend"
+      data-title="Web Projects"
+      data-body="A collection of web development projects showcasing front-end skills and design sensibility. Built with modern web technologies, these projects focus on clean UI, responsiveness, and smooth user experiences."
+      data-chips="HTML5,CSS3,JavaScript,Responsive Design,Flexbox,Grid,Animations"
+      data-highlights="Designed and built fully responsive layouts from scratch. Applied CSS animations and transitions for polished interactions. Focused on accessibility and cross-browser compatibility."
+      data-links="github:https://github.com/Sumit034-ai">
+      <div class="proj-num">03</div>
+      <div class="proj-tag">Web Development</div>
+      <div class="proj-title">Web Projects</div>
+      <p class="proj-desc">Collection of web development projects showcasing front-end skills. Built with modern web technologies and a focus on clean, functional design.</p>
+      <div class="proj-chips"><span class="pchip">HTML</span><span class="pchip">CSS</span><span class="pchip">JavaScript</span></div>
+      <div class="proj-click-hint">↗ Click for full details</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education" aria-label="Education">
+  <div class="reveal"><div class="sec-label">Education</div><h2 class="sec-title">Where I <span class="hl">Studied</span></h2></div>
+  <div class="edu-grid reveal">
+    <div class="edu-card"><div class="edu-year">2022 — 2027 · 3rd Year</div><div class="edu-degree">B.Tech Computer Science</div><div class="edu-school">Institute of Technology & Management<br/>Gwalior, Madhya Pradesh</div><span class="edu-badge">📚 Currently Enrolled</span><div class="edu-icon">🎓</div></div>
+    <div class="edu-card"><div class="edu-year">Ongoing</div><div class="edu-degree">Self-Learning & Projects</div><div class="edu-school">Machine Learning · NLP · Java · Web Dev — continuously building real-world projects and expanding skills every day.</div><span class="edu-badge" style="border-color:rgba(0,207,255,0.3);color:var(--accent2);background:rgba(0,207,255,0.05);">In Progress</span><div class="edu-icon">📚</div></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" aria-label="Contact">
+  <div class="contact-inner reveal">
+    <div class="sec-label">Contact</div>
+    <h2 class="contact-big">LET'S<br/><span>CONNECT</span></h2>
+    <p class="contact-sub">Actively looking for internship opportunities. Click any card to reach me directly!</p>
+    <div class="contact-btns">
+      <a href="mailto:singh034sumit@gmail.com" class="btn-primary">📧 Email Me</a>
+    </div>
+    <div class="social-grid">
+      <a href="mailto:singh034sumit@gmail.com" class="social-card gmail">
+        <div class="sc-icon">📧</div><div class="sc-name">Gmail</div>
+        <div class="sc-handle">singh034sumit@gmail.com</div><div class="sc-action">→ Send Email</div>
+      </a>
+      <a href="https://www.linkedin.com/in/sumit-rathor-0aab98290" target="_blank" rel="noopener" class="social-card linkedin">
+        <div class="sc-icon">💼</div><div class="sc-name">LinkedIn</div>
+        <div class="sc-handle">sumit-rathor-0aab98290</div><div class="sc-action">→ View Profile</div>
+      </a>
+      <a href="https://github.com/Sumit034-ai" target="_blank" rel="noopener" class="social-card github">
+        <div class="sc-icon">🐙</div><div class="sc-name">GitHub</div>
+        <div class="sc-handle">Sumit034-ai</div><div class="sc-action">→ See Code</div>
+      </a>
+      <a href="https://leetcode.com/u/sumitrathor034/" target="_blank" rel="noopener" class="social-card leetcode">
+        <div class="sc-icon">🧩</div><div class="sc-name">LeetCode</div>
+        <div class="sc-handle">leetcode.com/u/sumitrathor034</div><div class="sc-action">→ View Problems</div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<footer role="contentinfo">
+  <span>© 2026 <span class="fa">Sumit Rathor</span></span>
+  <span>Built with <span class="fa">HTML · CSS · JS</span></span>
+</footer>
+
+<script>
+// ── Custom Cursor ──
+const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');
+let mx=0,my=0,rx=0,ry=0;
+const isMobile=()=>!window.matchMedia('(hover:hover)').matches;
+document.addEventListener('mousemove',e=>{if(isMobile())return;mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function animRing(){if(!isMobile()){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;ring.style.left=rx+'px';ring.style.top=ry+'px';}requestAnimationFrame(animRing);})();
+document.querySelectorAll('a,button,.project-card,.stat-box,.skill-group,.edu-card,.social-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ring.style.width='52px';ring.style.height='52px';ring.style.opacity='0.9';});
+  el.addEventListener('mouseleave',()=>{ring.style.width='32px';ring.style.height='32px';ring.style.opacity='0.5';});
+});
+
+// ── 60fps Canvas BG ──
+const canvas=document.getElementById('bg-canvas'),ctx=canvas.getContext('2d');
+let W,H,pts=[],lastT=0,resizeT;
+const MOBILE=()=>window.innerWidth<768;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',()=>{clearTimeout(resizeT);resizeT=setTimeout(resize,150);});
+class P{
+  constructor(){this.x=Math.random()*W;this.y=Math.random()*H;this.vx=(Math.random()-.5)*.35;this.vy=(Math.random()-.5)*.35;this.r=Math.random()*1.4+.4;this.a=Math.random()*.38+.1;this.c=Math.random()>.5?'#00ff88':'#00cfff';}
+  update(dt){this.x+=this.vx*dt;this.y+=this.vy*dt;if(this.x<0)this.x=W;if(this.x>W)this.x=0;if(this.y<0)this.y=H;if(this.y>H)this.y=0;}
+  draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fillStyle=this.c;ctx.globalAlpha=this.a;ctx.fill();}
+}
+for(let i=0;i<(MOBILE()?60:130);i++)pts.push(new P());
+function drawGrid(){ctx.globalAlpha=.02;ctx.strokeStyle='#00ff88';ctx.lineWidth=.8;const s=MOBILE()?100:75;for(let x=0;x<W;x+=s){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}for(let y=0;y<H;y+=s){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}}
+function drawLines(){const d=MOBILE()?80:115;for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d2=dx*dx+dy*dy;if(d2<d*d){const dd=Math.sqrt(d2);ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=pts[i].c;ctx.globalAlpha=(1-dd/d)*.09;ctx.lineWidth=.5;ctx.stroke();}}}
+let hidden=false;
+document.addEventListener('visibilitychange',()=>{hidden=document.hidden;});
+(function anim(ts){
+  if(!hidden){const dt=Math.min((ts-lastT)/16.67,3);lastT=ts;ctx.clearRect(0,0,W,H);drawGrid();pts.forEach(p=>{p.update(dt);p.draw();});drawLines();}
+  requestAnimationFrame(anim);
+})(0);
+
+// ── Scroll Reveal + Skill Bars ──
+document.querySelectorAll('.reveal').forEach(r=>{
+  new IntersectionObserver(entries=>{entries.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('visible');e.target.querySelectorAll('.skill-bar-fill').forEach(b=>setTimeout(()=>b.classList.add('animate'),200));}
+  });},{threshold:.1}).observe(r);
+});
+
+// ── Active dock item on scroll ──
+const sections=document.querySelectorAll('section[id]');
+const dockItems=document.querySelectorAll('.dock-item[href]');
+window.addEventListener('scroll',()=>{
+  let cur2='';
+  sections.forEach(s=>{if(window.scrollY>=s.offsetTop-200)cur2=s.id;});
+  dockItems.forEach(d=>{d.classList.toggle('active',d.getAttribute('href')==='#'+cur2);});
+},{passive:true});
+
+// ── Typing animation ──
+const roles=['Java Backend Developer','DSA Enthusiast','ML Researcher','Web Developer','Open Source Contributor'];
+let ri=0,ci=0,typing=true;
+const tel=document.getElementById('typingEl');
+function typeRole(){
+  if(!tel)return;
+  if(typing){
+    if(ci<=roles[ri].length){tel.innerHTML=roles[ri].slice(0,ci)+'<span class="typing-cursor"></span>';ci++;setTimeout(typeRole,75);}
+    else{typing=false;setTimeout(typeRole,1800);}
+  }else{
+    if(ci>0){tel.innerHTML=roles[ri].slice(0,ci)+'<span class="typing-cursor"></span>';ci--;setTimeout(typeRole,35);}
+    else{typing=true;ri=(ri+1)%roles.length;setTimeout(typeRole,200);}
+  }
+}
+setTimeout(typeRole,1000);
+
+// ── Theme toggle ──
+const themeBtn=document.getElementById('themeBtn');
+const themeIcon=document.getElementById('themeIcon');
+const themeLabel=document.getElementById('themeLabel');
+const moonPath='<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>';
+const sunPath='<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+let isDay=false;
+themeBtn?.addEventListener('click',()=>{
+  isDay=!isDay;
+  document.body.classList.toggle('day',isDay);
+  themeIcon.innerHTML=isDay?moonPath:sunPath;
+  themeLabel.textContent=isDay?'Night':'Day';
+  pts.forEach(p=>{p.c=isDay?(Math.random()>.5?'#007744':'#0066aa'):(Math.random()>.5?'#00ff88':'#00cfff');});
+});
+
+// ── Hamburger menu ──
+const ham=document.getElementById('hamburger'),mob=document.getElementById('mobileMenu');
+function toggleMenu(force){
+  const open=force!==undefined?force:!mob.classList.contains('open');
+  mob.classList.toggle('open',open);ham.classList.toggle('open',open);
+  ham.setAttribute('aria-expanded',String(open));
+  document.body.style.overflow=open?'hidden':'';
+}
+ham?.addEventListener('click',()=>toggleMenu());
+document.querySelectorAll('.mob-link').forEach(a=>a.addEventListener('click',()=>toggleMenu(false)));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')toggleMenu(false);});
+
+// ── Project Modal ──
+const overlay=document.getElementById('modalOverlay');
+const modalClose=document.getElementById('modalClose');
+
+function openModal(card){
+  document.getElementById('modalNum').textContent=card.dataset.num;
+  document.getElementById('modalTag').textContent=card.dataset.tag;
+  document.getElementById('modalTitle').textContent=card.dataset.title;
+  document.getElementById('modalBody').textContent=card.dataset.body;
+  document.getElementById('modalHighlights').textContent=card.dataset.highlights;
+  // chips
+  const chipsEl=document.getElementById('modalChips');
+  chipsEl.innerHTML='';
+  card.dataset.chips.split(',').forEach(c=>{
+    const s=document.createElement('span');
+    s.className='modal-chip';s.textContent=c.trim();chipsEl.appendChild(s);
+  });
+  // links
+  const linksEl=document.getElementById('modalLinks');
+  linksEl.innerHTML='';
+  card.dataset.links.split('|').forEach(l=>{
+    const [label,url]=l.split(':');
+    if(!url)return;
+    const a=document.createElement('a');
+    a.href=url;a.target='_blank';a.rel='noopener';
+    a.className='modal-link';
+    a.textContent=(label==='github'?'🐙 View on GitHub':label==='demo'?'🌐 Live Demo':'🔗 '+label);
+    linksEl.appendChild(a);
+  });
+  overlay.classList.add('open');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>modalClose.focus(),100);
+}
+function closeModal(){
+  overlay.classList.remove('open');
+  document.body.style.overflow='';
+}
+document.querySelectorAll('.project-card').forEach(card=>{
+  card.addEventListener('click',()=>openModal(card));
+  card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openModal(card);}});
+});
+modalClose?.addEventListener('click',closeModal);
+overlay?.addEventListener('click',e=>{if(e.target===overlay)closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('open'))closeModal();});
+</script>
+</body>
+</html>
